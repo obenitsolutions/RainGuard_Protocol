@@ -25,7 +25,7 @@ The simulation demonstrates the complete insurance workflow:
 ## Features
 
 - **Real-time WebSocket updates** - Live data streaming
-- **Professional Silicon Valley UI** - Clean, modern dashboard design
+- **Professional UI** - Clean, modern dashboard design
 - **Multiple simultaneous activities** - 8 panels showing different system components
 - **Animated updates** - Smooth transitions and visual feedback
 - **Solana blockchain integration** - Realistic wallet addresses and transactions
