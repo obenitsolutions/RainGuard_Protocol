@@ -1,10 +1,13 @@
 # RainGuard Protocol - Live Simulation Dashboard
 
-This is a professional real-time simulation dashboard for the RainGuard Protocol AI-Powered Parametric Agricultural Insurance System.
+This is a professional real-time simulation dashboard for the RainGuard Protocol AI-Powered Deterministic Parametric Agricultural Insurance System.
 
-Project links:
-- Repository: https://github.com/obenitsolutions/RainGuard_Protocol
-- Issues & support: https://github.com/obenitsolutions/RainGuard_Protocol/issues
+## 📚 Research Paper & Resources
+
+- **📄 Research Paper (DOI)**: [https://doi.org/10.5281/zenodo.17490459](https://doi.org/10.5281/zenodo.17490459)
+- **🎥 Demo Video**: [Watch Simulation Demo](https://drive.google.com/file/d/1vDbZd8B8dn3xk1vlnsJvxWduxSS44ZGM/view?usp=sharing)
+- **📦 Repository**: https://github.com/obenitsolutions/RainGuard_Protocol
+- **🐛 Issues & Support**: https://github.com/obenitsolutions/RainGuard_Protocol/issues
 
 ## Overview
 
@@ -154,7 +157,8 @@ lsof -ti:8000 | xargs kill -9
 
 ## Credits
 
-- **Research**: RainGuard Protocol Paper
+- **Research Paper**: [RainGuard Protocol (DOI: 10.5281/zenodo.17490459)](https://doi.org/10.5281/zenodo.17490459)
+- **Demo Video**: [Watch the Simulation Demo](https://drive.google.com/file/d/1vDbZd8B8dn3xk1vlnsJvxWduxSS44ZGM/view?usp=sharing)
 - **Climate Data**: CHIRPS satellite data (8 African regions)
 - **AI Model**: EfficientNetV2B0 + PlantVillage dataset
 - **Blockchain**: Solana network specifications
@@ -181,7 +185,7 @@ If you deploy or demonstrate this simulation publicly, please add a visible "Pow
 
 Recommended citation (plain text):
 
-Mbu, O. E.; Kehinde, O. P.; Ayuk, O. P. (2025). RainGuard Protocol: AI-Powered Deterministic Parametric Agricultural Insurance for African Smallholder Farmers Using Blockchain Coordination. Software: Simulation Dashboard (v1.0). Available at: https://github.com/obenitsolutions/RainGuard_Protocol
+Mbu, O. E.; Kehinde, O. P.; Ayuk, O. P. (2025). RainGuard Protocol: AI-Powered Deterministic Parametric Agricultural Insurance for African Smallholder Farmers Using Blockchain Coordination. Software: Simulation Dashboard (v1.0). DOI: [10.5281/zenodo.17490459](https://doi.org/10.5281/zenodo.17490459). Available at: https://github.com/obenitsolutions/RainGuard_Protocol
 
 BibTeX:
 
