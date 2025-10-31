@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RainGuard Protocol - Live Simulation Dashboard</title>
+    <link rel="stylesheet" href="/static/styles/dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>[v-cloak]{display:none;}</style>
+    <script src="/static/script/vue.global.prod.js"></script>
+    <script src="/static/script/axios.min.js"></script>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <!-- Top Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                        <span class="logo-text">RainGuard Protocol</span>
+                    </div>
+                    <div class="subtitle">AI-Powered Parametric Insurance Simulation</div>
+                </div>
+                <div class="header-right">
+                    <div class="system-status" :class="systemStatus.class">
+                        <i class="fas fa-circle pulse"></i>
+                        <span>{{ systemStatus.text }}</span>
+                    </div>
+                    <div class="header-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span>{{ stats.total_farmers }} Farmers</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-globe-africa"></i>
+                            <span>{{ stats.total_regions }} Regions</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            
+            <!-- Weather Monitoring Panel -->
+            <div class="panel weather-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-satellite"></i> Weather Oracle Monitoring</h2>
+                    <div class="panel-badge">Real-Time Data</div>
+                </div>
+                <div class="panel-body">
+                    <div class="weather-stream">
+                        <div v-if="weatherUpdates.length === 0" class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Initializing satellite data stream...</p>
+                        </div>
+                        <div v-for="(weather, index) in weatherUpdates.slice(0, 8)" 
+                             :key="index" 
+                             class="weather-card"
+                             :class="weather.status">
+                            <div class="weather-header">
+                                <span class="region-name">{{ weather.region }}</span>
+                                <span class="weather-time">{{ formatTime(weather.timestamp) }}</span>
+                            </div>
+                            <div class="weather-metrics">
+                                <div class="metric">
+                                    <i class="fas fa-temperature-high"></i>
+                                    <span>{{ weather.temperature }}°C</span>
+                                </div>
+                                <div class="metric">
+                                    <i class="fas fa-cloud-rain"></i>
+                                    <span>{{ weather.rainfall }} mm</span>
+                                </div>
+                                <div class="metric drought-prob" :class="getDroughtClass(weather.drought_probability)">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>{{ (weather.drought_probability * 100).toFixed(1) }}%</span>
+                                </div>
+                            </div>
+                            <div v-if="weather.status === 'drought_detected'" class="alert-badge">
+                                <i class="fas fa-bell"></i> DROUGHT ALERT
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blockchain Verification Panel -->
+            <div class="panel blockchain-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-link"></i> Blockchain Verification</h2>
+                    <div class="panel-badge">Solana Network</div>
+                </div>
+                <div class="panel-body">
+                    <div class="verification-stream">
+                        <div v-if="verifications.length === 0" class="empty-state">
+                            <i class="fas fa-shield-alt"></i>
+                            <p>Waiting for verification requests...</p>
+                        </div>
+                        <div v-for="(verification, index) in verifications.slice(0, 5)" 
+                             :key="index" 
+                             class="verification-card"
+                             :class="verification.status">
+                            <div class="verification-header">
+                                <span class="farmer-name">{{ verification.name }}</span>
+                                <span class="verification-status">
+                                    <i v-if="verification.status === 'verifying'" class="fas fa-spinner fa-spin"></i>
+                                    <i v-else class="fas fa-check-circle"></i>
+                                    {{ verification.status }}
+                                </span>
+                            </div>
+                            <div class="address-display">
+                                <div class="address-label">Wallet Address:</div>
+                                <code class="solana-address">{{ verification.wallet_address }}</code>
+                            </div>
+                            <div v-if="verification.contract_address" class="address-display">
+                                <div class="address-label">Contract Address:</div>
+                                <code class="solana-address">{{ verification.contract_address }}</code>
+                            </div>
+                            <div v-if="verification.transaction_signature" class="tx-signature">
+                                <i class="fas fa-file-signature"></i>
+                                <code>{{ verification.transaction_signature.substring(0, 20) }}...</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Farmer Claims Processing -->
+            <div class="panel claims-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-user-shield"></i> Active Claims Processing</h2>
+                    <div class="panel-badge">{{ activeClaims.length }} Active</div>
+                </div>
+                <div class="panel-body">
+                    <div class="claims-stream">
+                        <div v-if="activeClaims.length === 0" class="empty-state">
+                            <i class="fas fa-clipboard-check"></i>
+                            <p>No active claims at the moment...</p>
+                        </div>
+                        <div v-for="claim in activeClaims.slice(0, 4)" 
+                             :key="claim.farmer_id" 
+                             class="claim-card">
+                            <div class="claim-header">
+                                <div class="claim-farmer">
+                                    <i class="fas fa-user"></i>
+                                    <span>{{ claim.name }}</span>
+                                </div>
+                                <div class="claim-region">{{ claim.region }}</div>
+                            </div>
+                            <div class="claim-progress">
+                                <div class="progress-step" :class="{active: claim.step >= 1, completed: claim.step > 1}">
+                                    <i class="fas fa-search"></i>
+                                    <span>Detected</span>
+                                </div>
+                                <div class="progress-step" :class="{active: claim.step >= 2, completed: claim.step > 2}">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Verified</span>
+                                </div>
+                                <div class="progress-step" :class="{active: claim.step >= 3, completed: claim.step > 3}">
+                                    <i class="fas fa-calculator"></i>
+                                    <span>Calculated</span>
+                                </div>
+                                <div class="progress-step" :class="{active: claim.step >= 4, completed: claim.step > 4}">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>Disbursed</span>
+                                </div>
+                                <div class="progress-step" :class="{active: claim.step >= 5, completed: claim.step > 5}">
+                                    <i class="fas fa-check-double"></i>
+                                    <span>Completed</span>
+                                </div>
+                            </div>
+                            <div v-if="claim.payout_amount" class="claim-amount">
+                                Payout: ${{ claim.payout_amount }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fund Disbursement Panel -->
+            <div class="panel disbursement-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-coins"></i> Fund Disbursement</h2>
+                    <div class="panel-badge">Pre-emptive + Final</div>
+                </div>
+                <div class="panel-body">
+                    <div class="disbursement-stream">
+                        <div v-if="disbursements.length === 0" class="empty-state">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <p>Awaiting disbursement triggers...</p>
+                        </div>
+                        <div v-for="(disbursement, index) in disbursements.slice(0, 5)" 
+                             :key="index" 
+                             class="disbursement-card"
+                             :class="disbursement.type">
+                            <div class="disbursement-header">
+                                <span class="farmer-name">{{ disbursement.name }}</span>
+                                <span class="disbursement-type">{{ disbursement.type }}</span>
+                            </div>
+                            <div class="disbursement-amount">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span class="amount">${{ disbursement.amount }}</span>
+                            </div>
+                            <div class="disbursement-wallet">
+                                <i class="fas fa-wallet"></i>
+                                <code>{{ disbursement.wallet_address.substring(0, 20) }}...</code>
+                            </div>
+                            <div v-if="disbursement.transaction_signature" class="disbursement-tx">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Transaction Confirmed</span>
+                            </div>
+                            <div class="disbursement-time">{{ formatTime(disbursement.timestamp) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Notifications Panel -->
+            <div class="panel email-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-envelope"></i> Email Notifications</h2>
+                    <div class="panel-badge">Automated</div>
+                </div>
+                <div class="panel-body">
+                    <div class="email-stream">
+                        <div v-if="emails.length === 0" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No emails sent yet...</p>
+                        </div>
+                        <div v-for="(email, index) in emails.slice(0, 4)" 
+                             :key="index" 
+                             class="email-card">
+                            <div class="email-header">
+                                <i class="fas fa-envelope-open"></i>
+                                <span class="email-to">{{ email.email }}</span>
+                            </div>
+                            <div class="email-subject">{{ email.subject }}</div>
+                            <div class="email-details">
+                                <div class="email-detail">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>${{ email.amount }} disbursed</span>
+                                </div>
+                                <div class="email-detail">
+                                    <i class="fas fa-tasks"></i>
+                                    <span>{{ email.action_required }}</span>
+                                </div>
+                            </div>
+                            <div class="email-time">{{ formatTime(email.timestamp) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Analysis Panel -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-brain"></i> AI Crop Analysis</h2>
+                    <div class="panel-badge">PlantVillage Model</div>
+                </div>
+                <div class="panel-body">
+                    <div class="ai-stream">
+                        <div v-if="aiAnalyses.length === 0" class="empty-state">
+                            <i class="fas fa-microscope"></i>
+                            <p>Waiting for photo submissions...</p>
+                        </div>
+                        <div v-for="(analysis, index) in aiAnalyses.slice(0, 4)" 
+                             :key="index" 
+                             class="ai-card"
+                             :class="analysis.status">
+                            <div class="ai-header">
+                                <span class="farmer-name">{{ analysis.name || 'Farmer #' + analysis.farmer_id.substring(0, 8) }}</span>
+                                <span class="ai-status">
+                                    <i v-if="analysis.status === 'analyzing'" class="fas fa-spinner fa-spin"></i>
+                                    <i v-else class="fas fa-check"></i>
+                                    {{ analysis.status }}
+                                </span>
+                            </div>
+                            <div v-if="analysis.num_photos" class="ai-photos">
+                                <i class="fas fa-images"></i>
+                                <span>{{ analysis.num_photos }} photos submitted</span>
+                            </div>
+                            <div v-if="analysis.health_classification" class="ai-results">
+                                <div class="ai-result">
+                                    <span class="label">Health:</span>
+                                    <span class="value damage">{{ analysis.health_classification }}</span>
+                                </div>
+                                <div class="ai-result">
+                                    <span class="label">Confidence:</span>
+                                    <span class="value">{{ (analysis.confidence * 100).toFixed(1) }}%</span>
+                                </div>
+                                <div class="ai-result">
+                                    <span class="label">Yield Loss:</span>
+                                    <span class="value">{{ analysis.yield_loss_percent }}%</span>
+                                </div>
+                            </div>
+                            <div v-if="analysis.damage_verified" class="ai-verified">
+                                <i class="fas fa-shield-check"></i>
+                                <span>Damage Verified - Release Funds</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Log Panel -->
+            <div class="panel activity-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-list"></i> System Activity Log</h2>
+                    <div class="panel-badge">{{ activityLog.length }} Events</div>
+                </div>
+                <div class="panel-body">
+                    <div class="activity-stream">
+                        <div v-if="activityLog.length === 0" class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <p>Activity log initializing...</p>
+                        </div>
+                        <div v-for="(log, index) in activityLog.slice(0, 10)" 
+                             :key="index" 
+                             class="activity-item"
+                             :class="log.type">
+                            <div class="activity-icon">
+                                <i :class="getActivityIcon(log.type)"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-message">{{ log.message }}</div>
+                                <div class="activity-time">{{ formatTime(log.timestamp) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="panel stats-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-chart-line"></i> Live Statistics</h2>
+                    <div class="panel-badge">Real-Time</div>
+                </div>
+                <div class="panel-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon weather">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">{{ weatherCount }}</div>
+                                <div class="stat-label">Weather Updates</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon claims">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">{{ totalClaims }}</div>
+                                <div class="stat-label">Total Claims</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon disbursed">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">${{ totalDisbursed }}</div>
+                                <div class="stat-label">Total Disbursed</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value">{{ completedClaims }}</div>
+                                <div class="stat-label">Completed Claims</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span>RainGuard Protocol Simulation Dashboard (CC BY 4.0)</span>
+                </div>
+                <div class="footer-right">
+                    <a href="https://github.com/obenitsolutions/RainGuard_Protocol" target="_blank" class="github-link">
+                        <i class="fab fa-github"></i>
+                        <span>View on GitHub</span>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/static/script/app.js"></script>
+</body>
+</html>
+

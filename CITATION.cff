@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: RainGuard Protocol: AI-Powered Deterministic Parametric Agricultural Insurance for African Smallholder Farmers Using Blockchain Coordination
+message: If you use this repository, please cite it as below.
+type: software
+abstract: >-
+  AI-powered deterministic parametric agricultural insurance simulation
+  demonstrating real-time weather monitoring, blockchain verification, pre-emptive
+  disbursement, email notification, AI crop analysis, and final settlement.
+authors:
+  - family-names: Oben
+    given-names: Emmanuel Mbu
+  - family-names: Kehinde
+    given-names: Olotu Paul
+  - family-names: Oben
+    given-names: Peter Ayuk
+keywords:
+  - RainGuard Protocol
+  - parametric insurance
+  - blockchain
+  - Solana
+  - AI
+  - PlantVillage
+  - agriculture
+  - simulation
+  - Raiku
+  - deterministic execution
+license: CC-BY-4.0
+repository-code: https://github.com/obenitsolutions/RainGuard_Protocol
+doi: 10.5281/zenodo.17490459
+version: 1.0.0
+date-released: 2025-10-31
+institution: OBEN IT Solutions
+number: OBEN-TR-2025-002
+

@@ -1,0 +1,932 @@
+/* RainGuard Protocol Dashboard - Professional Silicon Valley Style */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --bg-dark: #0f172a;
+    --bg-panel: #1e293b;
+    --bg-card: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #475569;
+    --success-color: #22c55e;
+    --info-color: #3b82f6;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1e3a5f 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Header */
+.dashboard-header {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+}
+
+.header-content {
+    max-width: 1800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.logo i {
+    font-size: 2rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-panel);
+    border-radius: 2rem;
+    font-size: 0.875rem;
+}
+
+.system-status.online {
+    color: var(--success-color);
+}
+
+.system-status .pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.header-stats {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.stat-item i {
+    color: var(--primary-color);
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+/* Panels */
+.panel {
+    background: var(--bg-panel);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.panel:hover {
+    transform: translateY(-2px);
+}
+
+.weather-panel {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.blockchain-panel {
+    grid-column: span 2;
+}
+
+.claims-panel {
+    grid-column: span 2;
+}
+
+.disbursement-panel {
+    grid-column: span 2;
+}
+
+.email-panel {
+    grid-column: span 2;
+}
+
+.ai-panel {
+    grid-column: span 2;
+}
+
+.activity-panel {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.stats-panel {
+    grid-column: span 2;
+}
+
+.panel-header {
+    padding: 1rem 1.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+.panel-header i {
+    color: var(--primary-color);
+}
+
+.panel-badge {
+    padding: 0.25rem 0.75rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.panel-body {
+    padding: 1rem;
+    height: calc(100% - 60px);
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+.panel-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.panel-body::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.panel-body::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Weather Cards */
+.weather-stream {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.weather-card {
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--info-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+.weather-card.drought_detected {
+    border-left-color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.weather-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.region-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.weather-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.weather-metrics {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.metric {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.metric i {
+    font-size: 1rem;
+}
+
+.drought-prob {
+    margin-left: auto;
+    font-weight: 600;
+}
+
+.drought-prob.high {
+    color: var(--danger-color);
+}
+
+.drought-prob.medium {
+    color: var(--warning-color);
+}
+
+.drought-prob.low {
+    color: var(--success-color);
+}
+
+.alert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--danger-color);
+    color: white;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Verification Cards */
+.verification-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.verification-card {
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--warning-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+.verification-card.verified {
+    border-left-color: var(--success-color);
+}
+
+.verification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.farmer-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.verification-status {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.verification-status i {
+    font-size: 1rem;
+}
+
+.address-display {
+    margin-bottom: 0.5rem;
+}
+
+.address-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.solana-address {
+    display: block;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--success-color);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+}
+
+.tx-signature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 0.25rem;
+}
+
+.tx-signature code {
+    font-size: 0.75rem;
+    color: var(--success-color);
+}
+
+/* Claims Cards */
+.claims-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.claim-card {
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--info-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+.claim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.claim-farmer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.claim-region {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.claim-progress {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.progress-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 0.25rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    transition: all 0.3s;
+}
+
+.progress-step.active {
+    background: rgba(37, 99, 235, 0.2);
+    color: var(--primary-color);
+}
+
+.progress-step.completed {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--success-color);
+}
+
+.claim-amount {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin-top: 0.5rem;
+}
+
+/* Disbursement Cards */
+.disbursement-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.disbursement-card {
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--success-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+.disbursement-card.preemptive {
+    border-left-color: var(--warning-color);
+}
+
+.disbursement-card.final {
+    border-left-color: var(--success-color);
+}
+
+.disbursement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.disbursement-type {
+    padding: 0.25rem 0.5rem;
+    background: var(--success-color);
+    color: white;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.disbursement-card.preemptive .disbursement-type {
+    background: var(--warning-color);
+}
+
+.disbursement-amount {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin-bottom: 0.75rem;
+}
+
+.disbursement-wallet {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.disbursement-tx {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--success-color);
+    margin-bottom: 0.5rem;
+}
+
+.disbursement-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+/* Email Cards */
+.email-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.email-card {
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--info-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+.email-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.email-to {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.email-subject {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.email-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.email-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.email-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+/* AI Cards */
+.ai-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ai-card {
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 3px solid var(--info-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+.ai-card.analyzing {
+    border-left-color: var(--warning-color);
+}
+
+.ai-card.completed {
+    border-left-color: var(--success-color);
+}
+
+.ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.ai-status {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.ai-photos {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.ai-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.ai-result {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.ai-result .label {
+    color: var(--text-muted);
+}
+
+.ai-result .value {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ai-result .value.damage {
+    color: var(--warning-color);
+    text-transform: capitalize;
+}
+
+.ai-verified {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+/* Activity Log */
+.activity-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activity-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+.activity-icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--info-color);
+    color: white;
+    border-radius: 0.5rem;
+}
+
+.activity-item.success .activity-icon {
+    background: var(--success-color);
+}
+
+.activity-item.warning .activity-icon {
+    background: var(--warning-color);
+}
+
+.activity-item.danger .activity-icon {
+    background: var(--danger-color);
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-message {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Statistics Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.stat-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--bg-card);
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.stat-icon {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.2);
+    color: var(--primary-color);
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.stat-icon.claims {
+    background: rgba(251, 146, 60, 0.2);
+    color: var(--warning-color);
+}
+
+.stat-icon.disbursed {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--success-color);
+}
+
+.stat-icon.success {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--info-color);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Footer */
+.dashboard-footer {
+    margin-top: 2rem;
+    padding: 1.5rem 2rem;
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-content {
+    max-width: 1800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.github-link:hover {
+    background: var(--bg-panel);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.github-link i {
+    font-size: 1.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1400px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .weather-panel,
+    .activity-panel {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+    
+    .panel {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .weather-stream {
+        grid-template-columns: 1fr;
+    }
+}
+
